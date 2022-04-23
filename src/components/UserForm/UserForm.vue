@@ -4,6 +4,14 @@
   <!-- EditUserByAdmin + AddUserByAdmin => Username, Password, Role | unterschiedliche Bezeichnung  -->
   <!-- https://mdbootstrap.com/docs/standard/extended/login/ -->
   <form class="auth-form">
+    <button
+      v-if="showRoleSelect"
+      type="button"
+      @click.prevent="onCloseOverlay"
+      class="auth-form__cancel-btn"
+    >
+      X
+    </button>
     <span class="auth-form__header">{{ formName }}</span>
     <div class="form-group">
       <label for="username">Username</label>
@@ -24,6 +32,19 @@
         placeholder="Enter Password"
         v-model="password"
       />
+    </div>
+    <div v-if="showRoleSelect" class="form-group">
+      <label for="role">Role</label>
+      <select
+        v-model="role"
+        class="form-select"
+        id="role"
+        aria-label="Default select"
+      >
+        <option selected>Open this select menu</option>
+        <option value="ADMIN">Admin</option>
+        <option value="STUDENT">Student</option>
+      </select>
     </div>
     <button type="submit" class="btn btn-primary" @click.prevent="onSubmitForm">
       Submit
@@ -50,11 +71,30 @@ export default {
       type: Function,
       required: true,
     },
+    user: {
+      type: Object,
+      required: false,
+    },
+    onCloseOverlay: {
+      type: Function,
+      required: false,
+    },
+    showRoleSelect: {
+      type: Boolean,
+      required: false,
+    },
   },
   methods: {
     async onSubmitForm() {
       await this.onSubmit(this.username, this.password, this.role);
     },
+  },
+  mounted() {
+    if (this.user) {
+      const { username, role } = this.user;
+      (this.username = username), (this.role = role);
+      this.password = "";
+    }
   },
 };
 </script>
@@ -87,5 +127,14 @@ label {
 .auth-form__header {
   font-weight: bold;
   font-size: 1.8rem;
+}
+
+.auth-form__cancel-btn {
+  position: absolute;
+  top: 1.1rem;
+  right: 2rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 100%;
 }
 </style>

@@ -142,7 +142,6 @@ export default {
     },
 
     async onEditFavorite(id, isFavorite) {
-      console.log(isFavorite);
       if (!isFavorite) {
         await this.addFavorite(id);
       } else {
@@ -174,7 +173,6 @@ export default {
         getAxiosConfig()
       );
       this.blogPosts = dbBlogPosts.data;
-      console.log(this.blogPosts);
     },
 
     toggleAddEditOverlay() {

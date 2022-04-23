@@ -16,13 +16,11 @@ export default {
         username,
         password,
       });
-      console.log(userLogin);
       if (userLogin.status == 201) {
         new AuthJWTCookie(userLogin.data).set();
         this.$router.push("/blogposts");
         return;
       }
-      console.log(userLogin);
     },
   },
 };

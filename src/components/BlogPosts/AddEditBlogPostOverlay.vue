@@ -75,7 +75,6 @@ export default {
       this.title = this.blogPost.title;
       this.content = this.blogPost.content;
     }
-    console.log("MOUNTED", this.blogPost);
   },
 };
 </script>

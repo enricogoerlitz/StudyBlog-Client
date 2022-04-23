@@ -8,9 +8,10 @@
 import UserForm from "@/components/UserForm/UserForm.vue";
 import axios from "axios";
 import AuthJWTCookie from "@/authentication/AuthJWTCookie";
+import UserFromOverlay from "@/components/UserForm/UserFromOverlay.vue";
 
 export default {
-  components: { UserForm },
+  components: { UserForm, UserFromOverlay },
   name: "LoginView",
   methods: {
     async onSubmit(username, password, role) {
@@ -19,12 +20,11 @@ export default {
         { username, password }
       );
       if (userLogin.status == 200) {
-        console.log(userLogin.data);
         new AuthJWTCookie(userLogin.data).set();
-        this.$router.push("/blogposts");
+        document.location.href = "/blogposts";
+        // this.$router.push("/blogposts");
         return;
       }
-      console.log(userLogin);
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">StudyBlog</a>
+      <router-link class="navbar-brand" to="/blogposts">StudyBlog</router-link>
       <button
         class="navbar-toggler"
         type="button"
@@ -14,23 +14,97 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
+        <div v-if="!isLogin && !isRegister" class="navbar-nav">
           <router-link class="nav-link" to="/blogposts">BlogPosts</router-link>
-          <router-link class="nav-link" to="/user-management"
+          <router-link v-if="isAdmin" class="nav-link" to="/user-management"
             >User Management</router-link
           >
         </div>
-        <router-link class="btn btn-primary ml-auto" to="/login"
-          >Login | Register | UserIcon</router-link
+
+        <button
+          v-if="isLogin"
+          class="btn btn-primary ml-auto"
+          @click="() => this.changeRoute('/register')"
         >
+          Register
+        </button>
+        <button
+          type="button"
+          v-if="isRegister"
+          class="btn btn-primary ml-auto"
+          @click="() => this.changeRoute('/login')"
+        >
+          Login
+        </button>
+        <button
+          v-if="!isLogin && !isRegister"
+          type="button"
+          class="btn btn-primary ml-auto"
+          @click="logout"
+        >
+          Logout
+        </button>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import AuthJWTCookie from "@/authentication/AuthJWTCookie";
+import Auth from "../../authentication/Auth";
 export default {
   name: "AppHeader",
+  data() {
+    return {
+      isLogin: false,
+      isRegister: false,
+      isAdmin: false,
+      name: this.$route,
+    };
+  },
+  methods: {
+    async logout() {
+      new AuthJWTCookie().remove();
+      await this.$router.push("/login");
+      this.checkRoute();
+    },
+    async changeRoute(route) {
+      await this.$router.push(route);
+      this.checkRoute();
+    },
+
+    async checkRoute() {
+      switch (document.location.pathname) {
+        case "/login":
+          this.isLogin = true;
+          this.isRegister = false;
+          break;
+        case "/register":
+          this.isRegister = true;
+          this.isLogin = false;
+          break;
+
+        default:
+          this.isRegister = false;
+          this.isLogin = false;
+          break;
+      }
+
+      const currentUser = await Auth.fetchCurrentUser();
+      if (currentUser && (this.isLogin || this.isRegister)) {
+        await this.$router.push("/blogposts");
+        this.isLogin = false;
+        this.isRegister = false;
+      }
+      if (currentUser && currentUser.role === "ADMIN") {
+        this.isAdmin = true;
+      }
+    },
+  },
+  mounted() {
+    this.checkRoute();
+    console.log(this.isLogin, this.isRegister);
+  },
 };
 </script>
 
