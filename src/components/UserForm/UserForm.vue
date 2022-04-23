@@ -32,9 +32,6 @@
 </template>
 
 <script>
-import axios from "axios";
-import AuthJWTCookie from "../../authentication/AuthJWTCookie";
-import axiosRequestConfig from "../../authentication/axiosRequestConfig";
 export default {
   name: "LoginForm",
   data() {

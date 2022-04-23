@@ -1,5 +1,5 @@
 <template>
-  <UserForm formName="Login" :onSubmit="onSubmit" />
+  <UserForm formName="Register" :onSubmit="onSubmit" />
 </template>
 
 <script>
@@ -9,15 +9,15 @@ import AuthJWTCookie from "@/authentication/AuthJWTCookie";
 
 export default {
   components: { UserForm },
-  name: "LoginView",
+  name: "RegisterView",
   methods: {
     async onSubmit(username, password, role) {
-      const userLogin = await axios.post(
-        "http://localhost:8080/api/v1/auth/login",
-        { username, password }
-      );
-      if (userLogin.status == 200) {
-        console.log(userLogin.data);
+      const userLogin = await axios.post("http://localhost:8080/api/v1/users", {
+        username,
+        password,
+      });
+      console.log(userLogin);
+      if (userLogin.status == 201) {
         new AuthJWTCookie(userLogin.data).set();
         this.$router.push("/blogposts");
         return;

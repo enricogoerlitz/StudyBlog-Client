@@ -16,7 +16,7 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <router-link class="nav-link" to="/blogposts">BlogPosts</router-link>
-          <router-link class="nav-link" to="/usermanagement"
+          <router-link class="nav-link" to="/user-management"
             >User Management</router-link
           >
         </div>

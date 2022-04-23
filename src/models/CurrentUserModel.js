@@ -24,3 +24,5 @@ class CurrentUserModel {
     this.username = "update";
   }
 }
+
+export default CurrentUserModel;

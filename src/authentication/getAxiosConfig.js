@@ -8,6 +8,13 @@ function getJWTCookie() {
 
   return "";
 }
-module.exports = {
-  headers: { Authorization: getJWTCookie() },
-};
+
+function getAxiosConfig() {
+  return {
+    headers: {
+      Authorization: getJWTCookie(),
+    },
+  };
+}
+
+export default getAxiosConfig;
