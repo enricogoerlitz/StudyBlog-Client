@@ -1,5 +1,7 @@
 <template>
-  <UserForm formName="Login" :onSubmit="onSubmit" />
+  <div class="container">
+    <UserForm formName="Login" :onSubmit="onSubmit" />
+  </div>
 </template>
 
 <script>

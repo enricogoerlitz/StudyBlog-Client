@@ -2,11 +2,13 @@
 class CurrentUserModel {
   username = null;
   role = null;
+  id = null;
 
   constructor(user) {
-    const { username, role } = user;
+    const { id, username, role } = user;
     this.username = user.username;
     this.role = role;
+    this.id = id;
   }
 
   // TODO: implement logout (with removing cookie and redirecting to login)

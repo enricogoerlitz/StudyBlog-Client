@@ -41,6 +41,7 @@ export default {
   },
   methods: {},
   async mounted() {
+    // TODO: source out
     const currentUser = await Auth.fetchCurrentUser();
     console.log("USER: ", currentUser);
     if (!currentUser) {

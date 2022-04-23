@@ -21,6 +21,10 @@ export default {
   color: #2c3e50;
 }
 
+body {
+  /* background-color: #f7f3eb !important; */
+}
+
 nav {
   padding: 30px;
 }
