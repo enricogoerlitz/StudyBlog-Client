@@ -3,42 +3,67 @@
   <!-- Login + Register + EditUser => Username, Password | unterschiedliche Bezeichnung  -->
   <!-- EditUserByAdmin + AddUserByAdmin => Username, Password, Role | unterschiedliche Bezeichnung  -->
   <!-- https://mdbootstrap.com/docs/standard/extended/login/ -->
-  <h1>Login {text}</h1>
-  <form>
+  <h1>{{ formName }}</h1>
+  <form class="auth-form">
     <div class="form-group">
-      <label for="exampleInputEmail1">Email address</label>
+      <label for="username">Username</label>
       <input
-        type="email"
+        type="text"
         class="form-control"
-        id="exampleInputEmail1"
-        aria-describedby="emailHelp"
-        placeholder="Enter email"
+        id="username"
+        placeholder="Enter Username"
+        v-model="username"
       />
-      <small id="emailHelp" class="form-text text-muted"
-        >We'll never share your email with anyone else.</small
-      >
     </div>
     <div class="form-group">
-      <label for="exampleInputPassword1">Password</label>
+      <label for="password">Password</label>
       <input
         type="password"
         class="form-control"
-        id="exampleInputPassword1"
-        placeholder="Password"
+        id="password"
+        placeholder="Enter Password"
+        v-model="password"
       />
     </div>
-    <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-      <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary" @click.prevent="onSubmitForm">
+      Submit
+    </button>
   </form>
 </template>
 
 <script>
+import axios from "axios";
+import AuthJWTCookie from "../../authentication/AuthJWTCookie";
+import axiosRequestConfig from "../../authentication/axiosRequestConfig";
 export default {
   name: "LoginForm",
+  data() {
+    return {
+      username: "",
+      password: "",
+      role: "",
+    };
+  },
+  props: {
+    formName: {
+      type: String,
+      required: true,
+    },
+    onSubmit: {
+      type: Function,
+      required: true,
+    },
+  },
+  methods: {
+    async onSubmitForm() {
+      await this.onSubmit(this.username, this.password, this.role);
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.auth-form {
+  max-width: 30rem;
+}
+</style>
