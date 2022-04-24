@@ -1,8 +1,30 @@
 <template>
   <div class="container d-flex-col justify-content-center align-items-center">
-    <div class="filter-area">
-      FilterArea
-      <button v-if="!isVisitor" @click="onShowAddOverlay">Add</button>
+    <h1 class="mt-4">Blogposts</h1>
+    <div class="filter-area d-flex-col mt-4 mb-4">
+      <label for="search-blogpost">Filter</label>
+      <div class="d-flex">
+        <input
+          class="form-control"
+          type="search"
+          @keyup="() => this.onFilterBySearch()"
+          @mouseup="() => this.onFilterTimeout()"
+          v-model="filterText"
+          placeholder="Search"
+          aria-label="Search"
+          id="search-blogpost"
+        />
+        <input
+          type="checkbox"
+          class="btn-check"
+          id="cb-favorites"
+          autocomplete="off"
+          @change="onFilterByFavorites"
+        />
+        <label class="btn btn-outline-secondary" for="cb-favorites"
+          >Favorites</label
+        ><br />
+      </div>
     </div>
     <div
       v-for="blogPost in blogPosts"
@@ -57,6 +79,13 @@
     :onSubmit="onAddEditBlogPost"
     :blogPost="editBlogPost"
   />
+  <button
+    class="floating-action-button btn btn-success"
+    v-if="!isVisitor"
+    @click="onShowAddOverlay"
+  >
+    Add
+  </button>
 </template>
 
 <script>
@@ -72,11 +101,13 @@ export default {
     return {
       currentUser: null,
       blogPosts: [],
-      filteredBlogPosts: [],
+      blogPostsUnfiltered: null,
       showAddEditOverlay: false,
       editBlogPost: null,
       formTitle: "",
       isVisitor: false,
+      filterByFavorites: false,
+      filterText: "",
     };
   },
   props: {},
@@ -90,6 +121,81 @@ export default {
       this.formTitle = "Edit Blogpost";
       this.editBlogPost = blogPost;
       this.toggleAddEditOverlay();
+    },
+
+    onFilterByFavorites() {
+      this.filterByFavorites = !this.filterByFavorites;
+      if (this.filterByFavorites) {
+        if (this.blogPostsUnfiltered) {
+          this.blogPosts = this.blogPostsUnfiltered.filter(
+            (blogPost) => blogPost.favorite
+          );
+          return;
+        }
+        this.blogPostsUnfiltered = [...this.blogPosts];
+        this.blogPosts = this.blogPosts.filter((blogPost) => blogPost.favorite);
+        return;
+      }
+
+      const searchText = this.filterText.trim().toLowerCase();
+      if (searchText === "") {
+        this.blogPosts = this.blogPostsUnfiltered;
+        this.blogPostsUnfiltered = null;
+        return;
+      }
+      this.onFilterBySearch();
+    },
+
+    onFilterBySearch() {
+      const searchText = this.filterText.trim().toLowerCase();
+      console.log(searchText);
+      if (
+        searchText === "" &&
+        !this.filterByFavorites &&
+        this.blogPostsUnfiltered
+      ) {
+        this.blogPosts = this.blogPostsUnfiltered;
+        this.blogPostsUnfiltered = null;
+        return;
+      }
+      if (searchText === "" && this.filterByFavorites) {
+        this.filterByFavorites = false;
+        this.onFilterByFavorites();
+        return;
+      }
+      if (searchText !== "" && this.filterByFavorites) {
+        this.blogPosts = this.blogPostsUnfiltered
+          .filter((blogPost) => blogPost.favorite)
+          .filter((blogPost) => {
+            // title, content, username
+            return (
+              blogPost.title.toLowerCase().includes(searchText) ||
+              blogPost.content.toLowerCase().includes(searchText) ||
+              blogPost.username.toLowerCase().includes(searchText)
+            );
+          });
+      }
+      if (searchText !== "" && !this.filterByFavorites) {
+        if (!this.blogPostsUnfiltered) {
+          this.blogPostsUnfiltered = [...this.blogPosts];
+        }
+        this.blogPosts = this.blogPostsUnfiltered.filter((blogPost) => {
+          // title, content, username
+          return (
+            blogPost.title.toLowerCase().includes(searchText) ||
+            blogPost.content.toLowerCase().includes(searchText) ||
+            blogPost.username.toLowerCase().includes(searchText)
+          );
+        });
+      }
+    },
+
+    onFilterTimeout() {
+      setTimeout(() => {
+        if (this.filterText === "") {
+          this.onFilterBySearch();
+        }
+      }, 100);
     },
 
     async onAddEditBlogPost(title, content) {
@@ -200,9 +306,31 @@ export default {
 </script>
 
 <style scoped>
+.filter-area,
+h1 {
+  text-align: left;
+}
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  font-size: 1.3rem;
+}
+
+#search-blogpost {
+  max-width: 15rem;
+  margin-right: 2rem;
+}
+
 .blogpost-container {
   border: 2px solid black;
   height: 10rem;
-  width: 80%;
+}
+.floating-action-button {
+  position: fixed;
+  padding: 1.7rem;
+  border-radius: 100%;
+  right: 2rem;
+  bottom: 2rem;
 }
 </style>

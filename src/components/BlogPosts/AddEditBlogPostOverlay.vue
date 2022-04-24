@@ -82,6 +82,7 @@ export default {
 <style scoped>
 textarea {
   max-height: 13rem;
+  min-height: 4rem !important;
 }
 
 label {
