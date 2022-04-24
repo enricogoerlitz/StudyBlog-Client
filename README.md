@@ -1,29 +1,43 @@
-# studyblog-client
+# README
 
-## Project setup
-```
-npm install
-```
+### Description
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+StudyBlog is an application for student to share there students life. <br />
+<br />
 
-### Compiles and minifies for production
-```
-npm run build
-```
+#### Student-Role
 
-### Run your unit tests
-```
-npm run test:unit
-```
+As a Student, you can create, edit or delete a BlogPost on/at a public page. <br />
+You can also favor posts you like. These post will be pushed up at the published date and marked as favourite. <br />
+At least, you can find posts by a full-text search and your favourites by button-click in the filter area.
 
-### Lints and fixes files
-```
-npm run lint
-```
+<br/>
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+#### Visitor-Role
+
+You just want to take a look into this application? Cool! You can sign in as a visitor and take a look to the posts.
+
+<br />
+
+#### Admin-Role
+
+Admin's have the honor to manage the users of the application. <br/>
+They can add, edit, and delete users with the student-role in the User-Management-Area. <br />
+Also, they can edit, or delete posts of students, if they publish offensive stuff.
+
+<br />
+<br />
+
+### Used Ressources
+
+JWT & Auth:
+<br />
+https://www.youtube.com/watch?v=VVn9OG9nfH0
+https://www.youtube.com/watch?v=DrKA56M1NRs
+<br />
+<br />
+General:
+<br />
+https://www.youtube.com/channel/UCwbZGqV2XymPKur91p1O9Ig
+<br />
+https://stackoverflow.com/
