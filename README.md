@@ -2,7 +2,7 @@
 
 ### Description
 
-StudyBlog is an application for student to share there students life. <br />
+StudyBlog is an application for students to share there students life. <br />
 <br />
 
 #### Student-Role
