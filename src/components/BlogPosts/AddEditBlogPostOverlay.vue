@@ -6,7 +6,7 @@
         @click.prevent="onToggleShowBlogPostOverlay"
         class="blogpost-overlay__form__cancel-btn"
       >
-        X
+        <i class="bi bi-x-circle"></i>
       </button>
       <span class="blogpost-overlay__form__header">{{ formTitle }}</span>
       <label for="title">Titel</label>
@@ -124,14 +124,23 @@ label {
 
 .blogpost-overlay__form__cancel-btn {
   position: absolute;
-  top: 1.1rem;
-  right: 2rem;
-  width: 0.3rem;
-  height: 0.3rem;
-  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(134, 134, 134);
+  top: 0.8rem;
+  right: 0.6rem;
+  font-size: 1.2rem;
+  background: none;
+  background-color: none;
+  border: none;
+  border-radius: 100rem;
+  padding: 0.25rem 0.5rem 0 0.5rem;
 }
 .blogpost-overlay__form__cancel-btn:hover {
   cursor: pointer;
+  background-color: rgb(236, 236, 236);
+  color: rgb(40, 40, 40);
 }
 
 .blogpost-overlay__form__header {

@@ -1,10 +1,18 @@
 <template>
   <div class="container">
-    <div class="filter-area">
-      FilterArea
-      <button type="button" @click="() => this.onShowUserOverlay()">
-        Add User
-      </button>
+    <h1 class="mt-4">User Management</h1>
+    <div class="filter-area d-flex-col mt-4 mb-4">
+      <label for="search-user">Find User</label>
+      <input
+        class="form-control"
+        type="search"
+        @keyup="() => this.onFilterBySearch()"
+        @mouseup="() => this.onFilterTimeout()"
+        v-model="filterText"
+        placeholder="Search"
+        aria-label="Search"
+        id="search-user"
+      />
     </div>
     <table class="table table-hover">
       <thead>
@@ -13,8 +21,8 @@
           <th scope="col">Username</th>
           <th scope="col">Password</th>
           <th scope="col">Role</th>
-          <th scope="col">Edit</th>
-          <th scope="col">Delete</th>
+          <th class="icon-col" scope="col">Edit</th>
+          <th class="icon-col" scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -23,14 +31,24 @@
           <td>{{ user.username }}</td>
           <td>*********</td>
           <td>{{ user.role }}</td>
-          <td>
-            <button type="button" @click="() => this.onShowUserOverlay(user)">
-              🐼 Edit
+          <td class="icon-col">
+            <button
+              v-if="user.role !== 'ADMIN'"
+              class="table-icon-button"
+              type="button"
+              @click="() => this.onShowUserOverlay(user)"
+            >
+              <i class="bi bi-pencil-square"></i>
             </button>
           </td>
-          <td>
-            <button type="button" @click="() => this.onDeleteUser(user.id)">
-              🐼 Delete
+          <td class="icon-col">
+            <button
+              v-if="user.role !== 'ADMIN'"
+              class="table-icon-button"
+              type="button"
+              @click="() => this.onDeleteUser(user.id)"
+            >
+              <i class="bi bi-trash-fill"></i>
             </button>
           </td>
         </tr>
@@ -45,8 +63,15 @@
       :showRoleSelect="true"
       :user="editUser"
       :showCancelButton="true"
+      :buttonText="userFromButtonText"
     />
   </UserFromOverlay>
+  <button
+    class="floating-action-button btn btn-success"
+    @click="() => this.onShowUserOverlay()"
+  >
+    <i class="bi bi-plus-lg"></i>
+  </button>
 </template>
 
 <script>
@@ -62,10 +87,13 @@ export default {
   data() {
     return {
       users: [],
-      filteredUsers: [],
+      usersUnfiltered: null,
       editUser: null,
       showUserForm: false,
       userFromTitle: "",
+      filterText: "",
+      userFromButtonText: "",
+      currentUser: null,
     };
   },
   methods: {
@@ -73,11 +101,51 @@ export default {
       if (user) {
         this.editUser = user;
         this.userFromTitle = "Edit User";
+        this.userFromButtonText = "Update";
       } else {
         this.userFromTitle = "Add User";
+        this.userFromButtonText = "Add";
       }
       this.toggleShowUserFrom();
     },
+
+    onFilterBySearch() {
+      const searchText = this.filterText.trim().toLowerCase();
+      if (searchText === "" && this.usersUnfiltered) {
+        this.users = [...this.usersUnfiltered];
+        this.usersUnfiltered = null;
+        return;
+      }
+      if (searchText !== "" && !this.usersUnfiltered) {
+        this.usersUnfiltered = [...this.users];
+        this.users = this.usersUnfiltered.filter((user) => {
+          return (
+            user.username.toLowerCase().includes(searchText) ||
+            user.role.toLowerCase().includes(searchText) ||
+            user.id.toString().toLowerCase().includes(searchText)
+          );
+        });
+        return;
+      }
+      if (searchText !== "" && this.usersUnfiltered) {
+        this.users = this.usersUnfiltered.filter((user) => {
+          return (
+            user.username.toLowerCase().includes(searchText) ||
+            user.role.toLowerCase().includes(searchText)
+          );
+        });
+        return;
+      }
+    },
+
+    onFilterTimeout() {
+      setTimeout(() => {
+        if (this.filterText === "") {
+          this.onFilterBySearch();
+        }
+      }, 100);
+    },
+
     async onSubmitUserFrom(username, password, role) {
       if (!this.editUser) {
         const userObj = { username, password, role };
@@ -121,17 +189,19 @@ export default {
         "http://localhost:8080/api/v1/admin/users",
         getAxiosConfig()
       );
-      this.users = dbUsers.data;
+      this.users = dbUsers.data.sort((a, b) => a.id - b.id);
+      this.filterText = "";
     },
   },
   async mounted() {
     // TODO: source out
-    const currentUser = await Auth.fetchCurrentUser();
-    if (!currentUser) {
+    this.currentUser = await Auth.fetchCurrentUser();
+    console.log("curr:", this.currentUser);
+    if (!this.currentUser) {
       this.$router.push("/login");
       return;
     }
-    if (currentUser.role !== "ADMIN") {
+    if (this.currentUser.role !== "ADMIN") {
       this.$router.push("/blogposts");
       return;
     }
@@ -143,5 +213,60 @@ export default {
 <style scoped>
 tr {
   text-align: left;
+}
+
+table {
+  overflow: hidden;
+  background-color: #fff;
+  padding: 0.3rem 0.4rem;
+  border-radius: 0.3rem;
+  border: 2px solid rgb(255, 255, 255);
+}
+
+table tbody tr {
+  height: 3rem;
+  border-bottom: 1px solid rgb(228, 228, 228);
+}
+
+.filter-area,
+h1 {
+  text-align: left;
+}
+
+label {
+  text-align: left;
+}
+
+#search-user {
+  max-width: 15rem;
+  margin-right: 2rem;
+}
+
+.floating-action-button {
+  position: fixed;
+  font-size: 2rem;
+  right: 2rem;
+  bottom: 2rem;
+}
+
+.table-icon-button {
+  background: none;
+  background-color: none;
+  font-size: 1.2rem;
+  border-radius: 100%;
+  padding-top: 0.25rem;
+  padding: 0.25rem 0.5rem 0 0.5rem;
+  color: rgb(134, 134, 134);
+
+  border: none;
+}
+.table-icon-button:hover {
+  cursor: pointer;
+  color: rgb(40, 40, 40);
+}
+
+.icon-col {
+  text-align: center;
+  max-width: 2rem !important;
 }
 </style>

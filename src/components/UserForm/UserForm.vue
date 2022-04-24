@@ -1,13 +1,13 @@
 <template>
   <!-- https://mdbootstrap.com/docs/standard/extended/login/ -->
-  <form class="auth-form">
+  <form autocomplete="off" class="auth-form">
     <button
       v-if="showCancelButton"
       type="button"
       @click.prevent="onCloseOverlay"
       class="auth-form__cancel-btn"
     >
-      X
+      <i class="bi bi-x-circle"></i>
     </button>
     <span class="auth-form__header">{{ formName }}</span>
     <div class="form-group">
@@ -15,6 +15,8 @@
       <input
         type="text"
         class="form-control"
+        autocomplete="off"
+        spellcheck="false"
         id="username"
         placeholder="Enter Username"
         v-model="username"
@@ -25,6 +27,8 @@
       <input
         type="password"
         class="form-control"
+        autocomplete="off"
+        spellcheck="false"
         id="password"
         placeholder="Enter Password"
         v-model="password"
@@ -44,11 +48,15 @@
       </select>
     </div>
     <button type="submit" class="btn btn-primary" @click.prevent="onSubmitForm">
-      Submit
+      {{ buttonText }}
     </button>
     <form v-if="showVisitorLogin">
-      <button type="submit" @click.prevent="onSubmitVisitor">
-        Sign in as Visitor
+      <button
+        class="btn btn-link"
+        type="submit"
+        @click.prevent="onSubmitVisitor"
+      >
+        Sign In as Visitor
       </button>
     </form>
   </form>
@@ -93,6 +101,10 @@ export default {
     },
     showCancelButton: {
       type: Boolean,
+      required: false,
+    },
+    buttonText: {
+      type: String,
       required: false,
     },
   },
@@ -152,10 +164,22 @@ label {
 
 .auth-form__cancel-btn {
   position: absolute;
-  top: 1.1rem;
-  right: 2rem;
-  width: 0.3rem;
-  height: 0.3rem;
-  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(134, 134, 134);
+  top: 0.8rem;
+  right: 0.6rem;
+  font-size: 1.2rem;
+  background: none;
+  background-color: none;
+  border: none;
+  border-radius: 100rem;
+  padding: 0.25rem 0.5rem 0 0.5rem;
+}
+.auth-form__cancel-btn:hover {
+  cursor: pointer;
+  background-color: rgb(236, 236, 236);
+  color: rgb(40, 40, 40);
 }
 </style>

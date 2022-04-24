@@ -19,6 +19,14 @@
           <router-link v-if="isAdmin" class="nav-link" to="/user-management"
             >User Management</router-link
           >
+          <button
+            v-if="!isLogin && !isRegister && !isVisitor"
+            type="button"
+            class="update-button btn btn-secondary btn-sm"
+            @click.prevent="toggleShowUserFrom"
+          >
+            Profile
+          </button>
         </div>
 
         <button
@@ -36,15 +44,6 @@
         >
           Login
         </button>
-
-        <button
-          v-if="!isLogin && !isRegister && !isVisitor"
-          type="button"
-          class="btn btn-secondary ml-auto"
-          @click="toggleShowUserFrom"
-        >
-          UpdateMe
-        </button>
         <button
           v-if="!isLogin && !isRegister"
           type="button"
@@ -59,11 +58,12 @@
 
   <UserFromOverlay v-if="showUserForm && !isVisitor">
     <UserForm
-      formName="Update your User"
+      formName="Update Your User"
       :onSubmit="onSubmitUserFrom"
       :onCloseOverlay="toggleShowUserFrom"
       :user="currentUser"
       :showCancelButton="true"
+      buttonText="Update Me"
     />
   </UserFromOverlay>
 </template>
@@ -120,6 +120,7 @@ export default {
       }
 
       this.currentUser = await Auth.fetchCurrentUser();
+      console.log("CURRUSER: ", this.currentUser);
       if (this.currentUser && (this.isLogin || this.isRegister)) {
         await this.$router.push("/blogposts");
         this.isLogin = false;
@@ -146,8 +147,11 @@ export default {
       console.log(res);
     },
 
-    toggleShowUserFrom() {
+    async toggleShowUserFrom() {
       this.showUserForm = !this.showUserForm;
+      if (!this.showUserForm) {
+        this.currentUser = await Auth.fetchCurrentUser();
+      }
     },
   },
   mounted() {
@@ -160,5 +164,10 @@ export default {
 <style scoped>
 .ml-auto {
   margin-left: auto;
+}
+.update-button {
+  height: 1.6rem;
+  padding: 0rem 0.8rem;
+  margin: auto 0.6rem;
 }
 </style>

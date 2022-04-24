@@ -1,5 +1,10 @@
 <template>
-  <UserForm formName="Register" :onSubmit="onSubmit" :showVisitorLogin="true" />
+  <UserForm
+    formName="Register"
+    buttonText="Register"
+    :onSubmit="onSubmit"
+    :showVisitorLogin="true"
+  />
 </template>
 
 <script>
@@ -12,13 +17,14 @@ export default {
   name: "RegisterView",
   methods: {
     async onSubmit(username, password, role) {
-      const userLogin = await axios.post("http://localhost:8080/api/v1/users", {
+      const res = await axios.post("http://localhost:8080/api/v1/users", {
         username,
         password,
       });
-      if (userLogin.status == 201) {
-        new AuthJWTCookie(userLogin.data).set();
-        this.$router.push("/blogposts");
+      if (res.status == 201) {
+        console.log(res.data);
+        new AuthJWTCookie(res.data).set();
+        document.location.href = "/blogposts";
         return;
       }
     },

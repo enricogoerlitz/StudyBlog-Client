@@ -1,6 +1,11 @@
 <template>
   <div class="container">
-    <UserForm formName="Login" :onSubmit="onSubmit" :showVisitorLogin="true" />
+    <UserForm
+      formName="Login"
+      :onSubmit="onSubmit"
+      buttonText="Login"
+      :showVisitorLogin="true"
+    />
   </div>
 </template>
 
