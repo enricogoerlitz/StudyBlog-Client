@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <UserForm formName="Login" :onSubmit="onSubmit" />
+    <UserForm formName="Login" :onSubmit="onSubmit" :showVisitorLogin="true" />
   </div>
 </template>
 
@@ -15,15 +15,13 @@ export default {
   name: "LoginView",
   methods: {
     async onSubmit(username, password, role) {
-      const userLogin = await axios.post(
-        "http://localhost:8080/api/v1/auth/login",
-        { username, password }
-      );
-      if (userLogin.status == 200) {
-        new AuthJWTCookie(userLogin.data).set();
+      const res = await axios.post("http://localhost:8080/api/v1/auth/login", {
+        username,
+        password,
+      });
+      if (res.status == 200) {
+        new AuthJWTCookie(res.data).set();
         document.location.href = "/blogposts";
-        // this.$router.push("/blogposts");
-        return;
       }
     },
   },

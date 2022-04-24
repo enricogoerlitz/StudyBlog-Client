@@ -1,5 +1,5 @@
 <template>
-  <UserForm formName="Register" :onSubmit="onSubmit" />
+  <UserForm formName="Register" :onSubmit="onSubmit" :showVisitorLogin="true" />
 </template>
 
 <script>

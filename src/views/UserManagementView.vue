@@ -44,6 +44,7 @@
       :onCloseOverlay="toggleShowUserFrom"
       :showRoleSelect="true"
       :user="editUser"
+      :showCancelButton="true"
     />
   </UserFromOverlay>
 </template>

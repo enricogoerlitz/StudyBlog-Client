@@ -2,7 +2,7 @@
   <div class="container d-flex-col justify-content-center align-items-center">
     <div class="filter-area">
       FilterArea
-      <button @click="onShowAddOverlay">Add</button>
+      <button v-if="!isVisitor" @click="onShowAddOverlay">Add</button>
     </div>
     <div
       v-for="blogPost in blogPosts"
@@ -32,6 +32,7 @@
           Del
         </button>
         <button
+          v-if="!isVisitor"
           @click="() => this.onEditFavorite(blogPost.id, blogPost.favorite)"
           type="button"
         >
@@ -75,6 +76,7 @@ export default {
       showAddEditOverlay: false,
       editBlogPost: null,
       formTitle: "",
+      isVisitor: false,
     };
   },
   props: {},
@@ -189,6 +191,8 @@ export default {
     if (!this.currentUser) {
       this.$router.push("/login");
       return;
+    } else if (this.currentUser.role === "VISITOR") {
+      this.isVisitor = true;
     }
     this.fetchBlogPosts();
   },

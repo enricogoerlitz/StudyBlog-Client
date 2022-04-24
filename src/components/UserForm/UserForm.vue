@@ -1,11 +1,8 @@
 <template>
-  <!-- // for login, register, editUser, addUserByAdmin, editUserByAdmin -->
-  <!-- Login + Register + EditUser => Username, Password | unterschiedliche Bezeichnung  -->
-  <!-- EditUserByAdmin + AddUserByAdmin => Username, Password, Role | unterschiedliche Bezeichnung  -->
   <!-- https://mdbootstrap.com/docs/standard/extended/login/ -->
   <form class="auth-form">
     <button
-      v-if="showRoleSelect"
+      v-if="showCancelButton"
       type="button"
       @click.prevent="onCloseOverlay"
       class="auth-form__cancel-btn"
@@ -49,10 +46,17 @@
     <button type="submit" class="btn btn-primary" @click.prevent="onSubmitForm">
       Submit
     </button>
+    <form v-if="showVisitorLogin">
+      <button type="submit" @click.prevent="onSubmitVisitor">
+        Sign in as Visitor
+      </button>
+    </form>
   </form>
 </template>
 
 <script>
+import axios from "axios";
+import AuthJWTCookie from "../../authentication/AuthJWTCookie";
 export default {
   name: "LoginForm",
   data() {
@@ -71,6 +75,10 @@ export default {
       type: Function,
       required: true,
     },
+    showVisitorLogin: {
+      type: Boolean,
+      required: false,
+    },
     user: {
       type: Object,
       required: false,
@@ -83,10 +91,23 @@ export default {
       type: Boolean,
       required: false,
     },
+    showCancelButton: {
+      type: Boolean,
+      required: false,
+    },
   },
   methods: {
     async onSubmitForm() {
       await this.onSubmit(this.username, this.password, this.role);
+    },
+
+    async onSubmitVisitor() {
+      console.log("Execution");
+      const res = await axios.get("http://localhost:8080/api/v1/auth/visitor");
+      if (res.status == 200) {
+        new AuthJWTCookie(res.data).set();
+        document.location.href = "/blogposts";
+      }
     },
   },
   mounted() {
