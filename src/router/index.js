@@ -25,6 +25,10 @@ const routes = [
     name: "UserManagementView",
     component: UserManagementView,
   },
+  {
+    path: "/:pathMatch(.*)*",
+    component: LoginView,
+  },
 ];
 
 const router = createRouter({
