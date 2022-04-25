@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { validateBlogPost } from "../../utilities/validation";
+import { validateBlogPost } from "../../utilities/modules/validation";
 export default {
   name: "AddBlogPostOverlay",
   data() {

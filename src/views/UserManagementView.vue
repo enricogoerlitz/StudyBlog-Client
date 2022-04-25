@@ -66,23 +66,20 @@
       :buttonText="userFromButtonText"
     />
   </UserFromOverlay>
-  <button
-    class="floating-action-button btn btn-success"
-    @click="() => this.onShowUserOverlay()"
-  >
-    <i class="bi bi-plus-lg"></i>
-  </button>
+  <FloatingActionButton :showButton="true" :onShowOverlay="onShowUserOverlay" />
 </template>
 
 <script>
 import axios from "axios";
 import getAxiosConfig from "../authentication/getAxiosConfig";
 import Auth from "../authentication/Auth";
+import FloatingActionButton from "../components/General/FloatingActionButton.vue";
 import UserFromOverlay from "@/components/UserForm/UserFromOverlay.vue";
 import UserForm from "../components/UserForm/UserForm.vue";
+import { createAPIRoute } from "@/utilities/modules/backend";
 
 export default {
-  components: { UserFromOverlay, UserForm },
+  components: { UserFromOverlay, UserForm, FloatingActionButton },
   name: "UserManagementView",
   data() {
     return {
@@ -150,7 +147,7 @@ export default {
       if (!this.editUser) {
         const userObj = { username, password, role };
         const res = await axios.post(
-          "http://localhost:8080/api/v1/admin/users",
+          createAPIRoute("/api/v1/admin/users"),
           userObj,
           getAxiosConfig()
         );
@@ -158,7 +155,7 @@ export default {
       } else {
         const userObj = { username, password, role };
         const res = await axios.put(
-          `http://localhost:8080/api/v1/admin/users/${this.editUser.id}`,
+          createAPIRoute(`/api/v1/admin/users/${this.editUser.id}`),
           userObj,
           getAxiosConfig()
         );
@@ -171,7 +168,7 @@ export default {
 
     async onDeleteUser(id) {
       const res = await axios.delete(
-        `http://localhost:8080/api/v1/admin/users/${id}`,
+        createAPIRoute(`/api/v1/admin/users/${id}`),
         getAxiosConfig()
       );
       console.log(res);
@@ -186,7 +183,7 @@ export default {
     },
     async fetchUsers() {
       const dbUsers = await axios.get(
-        "http://localhost:8080/api/v1/admin/users",
+        createAPIRoute("/api/v1/admin/users"),
         getAxiosConfig()
       );
       this.users = dbUsers.data.sort((a, b) => a.id - b.id);
@@ -240,13 +237,6 @@ label {
 #search-user {
   max-width: 15rem;
   margin-right: 2rem;
-}
-
-.floating-action-button {
-  position: fixed;
-  font-size: 2rem;
-  right: 2rem;
-  bottom: 2rem;
 }
 
 .table-icon-button {

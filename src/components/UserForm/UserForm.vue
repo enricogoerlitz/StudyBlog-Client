@@ -69,11 +69,12 @@
 <script>
 import axios from "axios";
 import AuthJWTCookie from "../../authentication/AuthJWTCookie";
+import { createAPIRoute } from "../../utilities/modules/backend";
 import {
   validateUsername,
   validatePassword,
   validateRole,
-} from "../../utilities/validation";
+} from "../../utilities/modules/validation";
 export default {
   name: "LoginForm",
   data() {
@@ -136,9 +137,7 @@ export default {
 
     async onSubmitVisitor() {
       try {
-        const res = await axios.get(
-          "http://localhost:8080/api/v1/auth/visitor"
-        );
+        const res = await axios.get(createAPIRoute("/api/v1/auth/visitor"));
         if (res.status == 200) {
           new AuthJWTCookie(res.data).set();
           document.location.href = "/blogposts";

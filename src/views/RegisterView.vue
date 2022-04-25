@@ -19,10 +19,8 @@ export default {
   name: "RegisterView",
   methods: {
     async onSubmit(username, password, role) {
-      const res = await axios.post("http://localhost:8080/api/v1/users", {
-        username,
-        password,
-      });
+      const userObj = { username, password };
+      const res = await axios.post(createAPIRoute("/api/v1/users"), userObj);
       if (res.status == 201) {
         console.log(res.data);
         new AuthJWTCookie(res.data).set();

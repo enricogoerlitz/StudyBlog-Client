@@ -74,6 +74,7 @@ import axios from "axios";
 import getAxiosConfig from "../../authentication/getAxiosConfig";
 import UserFromOverlay from "../UserForm/UserFromOverlay.vue";
 import UserForm from "../UserForm/UserForm.vue";
+import { createAPIRoute } from "../../utilities/modules/backend";
 
 export default {
   name: "AppHeader",
@@ -102,7 +103,7 @@ export default {
     async onSubmitUserFrom(username, password) {
       const userObj = { username, password };
       const res = await axios.put(
-        "http://localhost:8080/api/v1/users/edit",
+        createAPIRoute("/api/v1/users/edit"),
         userObj,
         getAxiosConfig()
       );

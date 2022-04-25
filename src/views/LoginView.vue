@@ -14,13 +14,14 @@ import UserForm from "@/components/UserForm/UserForm.vue";
 import axios from "axios";
 import AuthJWTCookie from "@/authentication/AuthJWTCookie";
 import UserFromOverlay from "@/components/UserForm/UserFromOverlay.vue";
+import { createAPIRoute } from "../utilities/modules/backend";
 
 export default {
   components: { UserForm, UserFromOverlay },
   name: "LoginView",
   methods: {
     async onSubmit(username, password) {
-      const res = await axios.post("http://localhost:8080/api/v1/auth/login", {
+      const res = await axios.post(createAPIRoute("/api/v1/auth/login"), {
         username,
         password,
       });

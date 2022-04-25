@@ -1,4 +1,4 @@
-import Cookie from "../utilities/Cookie";
+import Cookie from "../utilities/classes/Cookie";
 
 class AuthJWTCookie extends Cookie {
   constructor(jwt) {
