@@ -9,12 +9,12 @@
         <i class="bi bi-x-circle"></i>
       </button>
       <span class="blogpost-overlay__form__header">{{ formTitle }}</span>
-      <label for="title">Titel</label>
+      <label for="title">Title</label>
       <input
         type="text"
         class="form-control"
         id="title"
-        placeholder="Titel"
+        placeholder="Title"
         v-model="title"
       />
       <div :class="titleValid">Enter a Title (min 5, max 255)</div>
@@ -94,7 +94,17 @@ export default {
 
       return isTitleValid && isContentValid;
     },
-    printResponseError(statusCode) {},
+    printResponseError(statusCode) {
+      switch (statusCode) {
+        case 401:
+          this.formErrorMsg = `You are not allowed to change this resource! (${statusCode})`;
+          break;
+        case 500:
+        default:
+          this.formErrorMsg = `Unexpected Error with Statuscode: ${statusCode}!`;
+          break;
+      }
+    },
     setInvalidCssClass(isTitleValid, isContentValid) {
       const baseInvalidCssClass = "invalid";
       const showInvalidCssClass = "invalid show";
