@@ -21,6 +21,7 @@
         placeholder="Enter Username"
         v-model="username"
       />
+      <div :class="usernameValid">Enter a Username (min 3, max 50)</div>
     </div>
     <div class="form-group">
       <label for="password">Password</label>
@@ -33,6 +34,7 @@
         placeholder="Enter Password"
         v-model="password"
       />
+      <div :class="passwordValid">Enter a Password (min 4, max 50)</div>
     </div>
     <div v-if="showRoleSelect" class="form-group">
       <label for="role">Role</label>
@@ -46,25 +48,32 @@
         <option value="ADMIN">Admin</option>
         <option value="STUDENT">Student</option>
       </select>
+      <div :class="roleValid">Enter a valid Role!</div>
     </div>
     <button type="submit" class="btn btn-primary" @click.prevent="onSubmitForm">
       {{ buttonText }}
     </button>
     <form v-if="showVisitorLogin">
       <button
-        class="btn btn-link"
+        class="btn btn-link mt-1"
         type="submit"
         @click.prevent="onSubmitVisitor"
       >
         Sign In as Visitor
       </button>
     </form>
+    <div :class="formValid">{{ formErrorMsg }}</div>
   </form>
 </template>
 
 <script>
 import axios from "axios";
 import AuthJWTCookie from "../../authentication/AuthJWTCookie";
+import {
+  validateUsername,
+  validatePassword,
+  validateRole,
+} from "../../utilities/validation";
 export default {
   name: "LoginForm",
   data() {
@@ -72,6 +81,11 @@ export default {
       username: "",
       password: "",
       role: "",
+      usernameValid: "invalid",
+      passwordValid: "invalid",
+      roleValid: "invalid",
+      formValid: "invalid",
+      formErrorMsg: "",
     };
   },
   props: {
@@ -110,16 +124,112 @@ export default {
   },
   methods: {
     async onSubmitForm() {
-      await this.onSubmit(this.username, this.password, this.role);
+      if (!this.validateFormInputs()) return;
+
+      try {
+        await this.onSubmit(this.username, this.password, this.role);
+      } catch (err) {
+        console.log(err.response);
+        this.printResponseError(err.response.status);
+      }
     },
 
     async onSubmitVisitor() {
-      console.log("Execution");
-      const res = await axios.get("http://localhost:8080/api/v1/auth/visitor");
-      if (res.status == 200) {
-        new AuthJWTCookie(res.data).set();
-        document.location.href = "/blogposts";
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/auth/visitor"
+        );
+        if (res.status == 200) {
+          new AuthJWTCookie(res.data).set();
+          document.location.href = "/blogposts";
+        }
+      } catch (err) {
+        this.printResponseError(err.response.status);
       }
+    },
+
+    validateFormInputs() {
+      const isUsernameValid = validateUsername(this.username);
+      const isPasswordValid = validatePassword(this.password);
+      const isRoleValid = validateRole(this.role);
+
+      if (this.showVisitorLogin) {
+        // without role => login/register  ==> showVisitorLogIn
+        this.validateLoginRegisterInputs(isUsernameValid, isPasswordValid);
+        return isUsernameValid && isPasswordValid;
+      } else if (this.user && this.showRoleSelect) {
+        // without password => updateUserByAdmin ==> user !== null && showRoleSelect
+        this.validateUpdateUserByAdminInputs(isUsernameValid, isRoleValid);
+        return isUsernameValid && isRoleValid;
+      } else if (this.user && !this.showRoleSelect) {
+        // without role and password => updateMe ==> user!== null && !showSelect
+        this.validateUpdateUserSelf(isUsernameValid);
+        return isUsernameValid;
+      }
+
+      // add by admin
+      this.validateAddUserByAdmin(
+        isUsernameValid,
+        isPasswordValid,
+        isRoleValid
+      );
+
+      return isUsernameValid && isPasswordValid && isRoleValid;
+    },
+
+    validateLoginRegisterInputs(isUsernameValid, isPasswordValid) {
+      const [usernameValid, passwordValid] = this.getValidationCssClasses(
+        isUsernameValid,
+        isPasswordValid
+      );
+      this.usernameValid = usernameValid;
+      this.passwordValid = passwordValid;
+    },
+
+    validateUpdateUserByAdminInputs(isUsernameValid, isRoleValid) {
+      const [usernameValid, roleValid] = this.getValidationCssClasses(
+        isUsernameValid,
+        isRoleValid
+      );
+      this.usernameValid = usernameValid;
+      this.roleValid = roleValid;
+    },
+
+    validateUpdateUserSelf(isUsernameValid) {
+      const [usernameValid] = this.getValidationCssClasses(isUsernameValid);
+      this.usernameValid = usernameValid;
+    },
+
+    validateAddUserByAdmin(isUsernameValid, isPasswordValid, isRoleValid) {
+      const [usernameValid, passwordValid, roleValid] =
+        this.getValidationCssClasses(
+          isUsernameValid,
+          isPasswordValid,
+          isRoleValid
+        );
+      this.usernameValid = usernameValid;
+      this.passwordValid = passwordValid;
+      this.roleValid = roleValid;
+    },
+
+    getValidationCssClasses(...validStatus) {
+      return validStatus.map((status) => (status ? "invalid" : "invalid show"));
+    },
+
+    printResponseError(statusCode) {
+      console.log("ERRORCODE: ", statusCode);
+      switch (statusCode) {
+        case 400:
+          this.formErrorMsg = `This username is still existing! (${statusCode})`;
+          break;
+        case 403:
+          this.formErrorMsg = `Could not find this User! (${statusCode})`;
+          break;
+        default:
+          this.formErrorMsg = `Unexpected Error with Statuscode: ${statusCode}!`;
+          break;
+      }
+      this.formValid = "invalid show";
     },
   },
   mounted() {

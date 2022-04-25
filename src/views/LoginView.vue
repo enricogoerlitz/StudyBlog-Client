@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container mt-5">
     <UserForm
-      formName="Login"
+      formName="Sign In"
       :onSubmit="onSubmit"
       buttonText="Login"
       :showVisitorLogin="true"
@@ -19,7 +19,7 @@ export default {
   components: { UserForm, UserFromOverlay },
   name: "LoginView",
   methods: {
-    async onSubmit(username, password, role) {
+    async onSubmit(username, password) {
       const res = await axios.post("http://localhost:8080/api/v1/auth/login", {
         username,
         password,
@@ -27,6 +27,7 @@ export default {
       if (res.status == 200) {
         new AuthJWTCookie(res.data).set();
         document.location.href = "/blogposts";
+        return;
       }
     },
   },

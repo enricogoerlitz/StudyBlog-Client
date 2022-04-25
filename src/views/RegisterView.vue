@@ -1,10 +1,12 @@
 <template>
-  <UserForm
-    formName="Register"
-    buttonText="Register"
-    :onSubmit="onSubmit"
-    :showVisitorLogin="true"
-  />
+  <div class="mt-5">
+    <UserForm
+      formName="Register"
+      buttonText="Register"
+      :onSubmit="onSubmit"
+      :showVisitorLogin="true"
+    />
+  </div>
 </template>
 
 <script>

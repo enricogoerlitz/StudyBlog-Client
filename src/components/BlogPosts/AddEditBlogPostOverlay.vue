@@ -17,6 +17,7 @@
         placeholder="Titel"
         v-model="title"
       />
+      <div :class="titleValid">Enter a Title (min 5, max 255)</div>
       <label for="content">Post Content</label>
       <textarea
         type="text"
@@ -27,6 +28,8 @@
         maxlength="1500"
         v-model="content"
       />
+      <div :class="contentValid">Enter a Username (min 5, max 3000)</div>
+
       <button
         @click.prevent="onSubmitForm"
         type="submit"
@@ -35,16 +38,22 @@
         Submit
       </button>
     </form>
+    <div :class="formValid">{{ formErrorMsg }}</div>
   </div>
 </template>
 
 <script>
+import { validateBlogPost } from "../../utilities/validation";
 export default {
   name: "AddBlogPostOverlay",
   data() {
     return {
       title: "",
       content: "",
+      titleValid: "invalid",
+      contentValid: "invalid",
+      formValid: "invalid",
+      formErrorMsg: "",
     };
   },
   props: {
@@ -67,9 +76,39 @@ export default {
   },
   methods: {
     onSubmitForm() {
-      this.onSubmit(this.title, this.content);
+      if (!this.validateFormInputs()) return;
+      try {
+        this.onSubmit(this.title, this.content);
+      } catch (err) {
+        console.log(err.response);
+        this.printResponseError(err.response.status);
+      }
+    },
+    validateFormInputs() {
+      const { title, content } = this;
+      const [isTitleValid, isContentValid] = validateBlogPost({
+        title,
+        content,
+      });
+      this.setInvalidCssClass(isTitleValid, isContentValid);
+
+      return isTitleValid && isContentValid;
+    },
+    printResponseError(statusCode) {},
+    setInvalidCssClass(isTitleValid, isContentValid) {
+      const baseInvalidCssClass = "invalid";
+      const showInvalidCssClass = "invalid show";
+      const titleClass = isTitleValid
+        ? baseInvalidCssClass
+        : showInvalidCssClass;
+      const contentClass = isContentValid
+        ? baseInvalidCssClass
+        : showInvalidCssClass;
+      this.titleValid = titleClass;
+      this.contentValid = contentClass;
     },
   },
+
   mounted() {
     if (this.blogPost) {
       this.title = this.blogPost.title;

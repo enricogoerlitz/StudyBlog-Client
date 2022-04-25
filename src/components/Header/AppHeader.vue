@@ -32,7 +32,7 @@
         <button
           v-if="isLogin"
           class="btn btn-primary ml-auto"
-          @click="() => this.changeRoute('/register')"
+          @click="() => this.onChangeRoute('/register')"
         >
           Register
         </button>
@@ -40,7 +40,7 @@
           type="button"
           v-if="isRegister"
           class="btn btn-primary ml-auto"
-          @click="() => this.changeRoute('/login')"
+          @click="() => this.onChangeRoute('/login')"
         >
           Login
         </button>
@@ -48,14 +48,13 @@
           v-if="!isLogin && !isRegister"
           type="button"
           class="btn btn-primary ml-auto"
-          @click="logout"
+          @click="onLogout"
         >
           Logout
         </button>
       </div>
     </div>
   </nav>
-
   <UserFromOverlay v-if="showUserForm && !isVisitor">
     <UserForm
       formName="Update Your User"
@@ -79,7 +78,6 @@ import UserForm from "../UserForm/UserForm.vue";
 export default {
   name: "AppHeader",
   components: { UserFromOverlay, UserForm },
-
   data() {
     return {
       isLogin: false,
@@ -92,16 +90,34 @@ export default {
     };
   },
   methods: {
-    async logout() {
+    async onLogout() {
       new AuthJWTCookie().remove();
       await this.$router.push("/login");
       this.checkRoute();
     },
-    async changeRoute(route) {
+    async onChangeRoute(route) {
       await this.$router.push(route);
       this.checkRoute();
     },
+    async onSubmitUserFrom(username, password) {
+      const userObj = { username, password };
+      const res = await axios.put(
+        "http://localhost:8080/api/v1/users/edit",
+        userObj,
+        getAxiosConfig()
+      );
 
+      if (res.status === 202) {
+        new AuthJWTCookie(res.data).set();
+        this.toggleShowUserFrom();
+      }
+    },
+    async toggleShowUserFrom() {
+      this.showUserForm = !this.showUserForm;
+      if (!this.showUserForm) {
+        this.currentUser = await Auth.fetchCurrentUser();
+      }
+    },
     async checkRoute() {
       switch (document.location.pathname) {
         case "/login":
@@ -130,27 +146,6 @@ export default {
         this.isAdmin = true;
       } else if (this.currentUser && this.currentUser.role === "VISITOR") {
         this.isVisitor = true;
-      }
-    },
-
-    async onSubmitUserFrom(username, password) {
-      const userObj = { username, password };
-      const res = await axios.put(
-        "http://localhost:8080/api/v1/users/edit",
-        userObj,
-        getAxiosConfig()
-      );
-      if (res.status === 202) {
-        new AuthJWTCookie(res.data).set();
-        this.toggleShowUserFrom();
-      }
-      console.log(res);
-    },
-
-    async toggleShowUserFrom() {
-      this.showUserForm = !this.showUserForm;
-      if (!this.showUserForm) {
-        this.currentUser = await Auth.fetchCurrentUser();
       }
     },
   },

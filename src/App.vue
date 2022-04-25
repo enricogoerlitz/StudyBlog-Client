@@ -38,4 +38,15 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.invalid {
+  margin-top: 0.6rem;
+  color: red;
+  text-align: left;
+  display: none;
+}
+
+.invalid.show {
+  display: block;
+}
 </style>
