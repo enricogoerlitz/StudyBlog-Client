@@ -9,8 +9,7 @@
 	"scripts": {
 		"start": "vue-cli-service serve",
 		"build": "vue-cli-service build",
-		"test:unit": "vue-cli-service test:unit",
-		"lint": "vue-cli-service lint"
+		"test:unit": "vue-cli-service test:unit"
 	},
 	"dependencies": {
 		"axios": "^0.26.1",
