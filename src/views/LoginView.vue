@@ -11,6 +11,7 @@
 
 <script>
 import axios from "axios";
+
 import AuthJWTCookie from "@/authentication/classes/AuthJWTCookie";
 import { createAPIRoute } from "../authentication/modules/backend";
 
