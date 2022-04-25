@@ -10,9 +10,12 @@
 </template>
 
 <script>
-import UserForm from "@/components/UserForm/UserForm.vue";
 import axios from "axios";
+
 import AuthJWTCookie from "@/authentication/classes/AuthJWTCookie";
+import { createAPIRoute } from "../authentication/modules/backend";
+
+import UserForm from "../components/UserForm/UserForm.vue";
 
 export default {
   components: { UserForm },
@@ -22,10 +25,8 @@ export default {
       const userObj = { username, password };
       const res = await axios.post(createAPIRoute("/api/v1/users"), userObj);
       if (res.status == 201) {
-        console.log(res.data);
         new AuthJWTCookie(res.data).set();
         document.location.href = "/blogposts";
-        return;
       }
     },
   },

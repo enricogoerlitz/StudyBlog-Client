@@ -110,6 +110,10 @@ export default {
   font-weight: bold;
 }
 
+.blogpost-container__title {
+  color: #707070;
+}
+
 .blogpost-container__title__buttons {
   display: flex;
   align-items: flex-start;

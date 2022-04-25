@@ -36,13 +36,15 @@
 
 <script>
 import axios from "axios";
+
 import { getAxiosConfig } from "../authentication/modules/auth";
 import { fetchCurrentUser } from "../authentication/modules/auth";
-import FloatingActionButton from "../components/General/FloatingActionButton.vue";
-import UserFromOverlay from "@/components/UserForm/UserFromOverlay.vue";
+import { createAPIRoute } from "@/authentication/modules/backend";
+
 import UserForm from "../components/UserForm/UserForm.vue";
+import UserFromOverlay from "@/components/UserForm/UserFromOverlay.vue";
 import UserManagementTable from "../components/UserManagement/UserManagementTable.vue";
-import { createAPIRoute } from "@/utilities/modules/backend";
+import FloatingActionButton from "../components/General/FloatingActionButton.vue";
 
 export default {
   components: {
@@ -106,7 +108,6 @@ export default {
           userObj,
           getAxiosConfig()
         );
-        console.log(res);
       } else {
         const userObj = { username, password, role };
         const res = await axios.put(
@@ -114,7 +115,6 @@ export default {
           userObj,
           getAxiosConfig()
         );
-        console.log(res);
       }
 
       this.fetchUsers();
@@ -126,7 +126,6 @@ export default {
         createAPIRoute(`/api/v1/admin/users/${id}`),
         getAxiosConfig()
       );
-      console.log(res);
       this.fetchUsers();
     },
 
@@ -158,7 +157,6 @@ export default {
   },
   async mounted() {
     this.currentUser = await fetchCurrentUser();
-    console.log("curr:", this.currentUser);
     if (!this.currentUser) {
       this.$router.push("/login");
       return;

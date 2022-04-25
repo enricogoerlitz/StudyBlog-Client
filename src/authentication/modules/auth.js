@@ -1,6 +1,6 @@
 import CurrentUserModel from "../../models/CurrentUserModel";
 import axios from "axios";
-import { createAPIRoute } from "../../utilities/modules/backend";
+import { createAPIRoute } from "./backend";
 
 const JWT_COOKIE_NAME = "studyblog_jwt";
 

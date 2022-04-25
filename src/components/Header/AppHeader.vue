@@ -68,13 +68,15 @@
 </template>
 
 <script>
-import AuthJWTCookie from "@/authentication/classes/AuthJWTCookie";
-import { fetchCurrentUser } from "../../authentication/modules/auth";
 import axios from "axios";
+
+import AuthJWTCookie from "@/authentication/classes/AuthJWTCookie";
+import { createAPIRoute } from "../../authentication/modules/backend";
+import { fetchCurrentUser } from "../../authentication/modules/auth";
 import { getAxiosConfig } from "../../authentication/modules/auth";
+
 import UserFromOverlay from "../UserForm/UserFromOverlay.vue";
 import UserForm from "../UserForm/UserForm.vue";
-import { createAPIRoute } from "../../utilities/modules/backend";
 
 export default {
   name: "AppHeader",
@@ -137,7 +139,6 @@ export default {
       }
 
       this.currentUser = await fetchCurrentUser();
-      console.log("CURRUSER: ", this.currentUser);
       if (this.currentUser && (this.isLogin || this.isRegister)) {
         await this.$router.push("/blogposts");
         this.isLogin = false;
@@ -152,7 +153,6 @@ export default {
   },
   mounted() {
     this.checkRoute();
-    console.log(this.isLogin, this.isRegister);
   },
 };
 </script>
@@ -161,6 +161,7 @@ export default {
 .ml-auto {
   margin-left: auto;
 }
+
 .update-button {
   height: 1.6rem;
   padding: 0rem 0.8rem;

@@ -72,6 +72,7 @@ table {
   padding: 0.3rem 0.4rem;
   border-radius: 0.3rem;
   border: 2px solid rgb(255, 255, 255);
+  margin-bottom: 3rem;
 }
 
 table tbody tr {
@@ -87,7 +88,6 @@ table tbody tr {
   padding-top: 0.25rem;
   padding: 0.25rem 0.5rem 0 0.5rem;
   color: rgb(134, 134, 134);
-
   border: none;
 }
 

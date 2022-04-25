@@ -22,7 +22,6 @@ export default {
 }
 
 body {
-  /* background-color: #f7f3eb !important; */
   background-color: #ededed !important;
 }
 

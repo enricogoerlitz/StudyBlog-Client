@@ -1,5 +1,4 @@
 <template>
-  <!-- https://mdbootstrap.com/docs/standard/extended/login/ -->
   <form autocomplete="off" class="auth-form">
     <button
       v-if="showCancelButton"
@@ -68,13 +67,15 @@
 
 <script>
 import axios from "axios";
+
 import AuthJWTCookie from "../../authentication/classes/AuthJWTCookie";
-import { createAPIRoute } from "../../utilities/modules/backend";
+import { createAPIRoute } from "../../authentication/modules/backend";
 import {
   validateUsername,
   validatePassword,
   validateRole,
 } from "../../utilities/modules/validation";
+
 export default {
   name: "LoginForm",
   data() {
@@ -90,24 +91,20 @@ export default {
     };
   },
   props: {
-    formName: {
-      type: String,
-      required: true,
-    },
-    onSubmit: {
-      type: Function,
-      required: true,
-    },
-    showVisitorLogin: {
-      type: Boolean,
-      required: false,
-    },
     user: {
       type: Object,
       required: false,
     },
-    onCloseOverlay: {
-      type: Function,
+    formName: {
+      type: String,
+      required: true,
+    },
+    buttonText: {
+      type: String,
+      required: false,
+    },
+    showVisitorLogin: {
+      type: Boolean,
       required: false,
     },
     showRoleSelect: {
@@ -118,8 +115,12 @@ export default {
       type: Boolean,
       required: false,
     },
-    buttonText: {
-      type: String,
+    onSubmit: {
+      type: Function,
+      required: true,
+    },
+    onCloseOverlay: {
+      type: Function,
       required: false,
     },
   },
@@ -130,7 +131,6 @@ export default {
       try {
         await this.onSubmit(this.username, this.password, this.role);
       } catch (err) {
-        console.log(err.response);
         this.printResponseError(err.response.status);
       }
     },
@@ -206,6 +206,7 @@ export default {
           isPasswordValid,
           isRoleValid
         );
+
       this.usernameValid = usernameValid;
       this.passwordValid = passwordValid;
       this.roleValid = roleValid;
@@ -216,7 +217,6 @@ export default {
     },
 
     printResponseError(statusCode) {
-      console.log("ERRORCODE: ", statusCode);
       switch (statusCode) {
         case 400:
           this.formErrorMsg = `This username is still existing! (${statusCode})`;
@@ -234,7 +234,8 @@ export default {
   mounted() {
     if (this.user) {
       const { username, role } = this.user;
-      (this.username = username), (this.role = role);
+      this.username = username;
+      this.role = role;
       this.password = "";
     }
   },
@@ -286,6 +287,7 @@ label {
   border-radius: 100rem;
   padding: 0.25rem 0.5rem 0 0.5rem;
 }
+
 .auth-form__cancel-btn:hover {
   cursor: pointer;
   background-color: rgb(236, 236, 236);

@@ -44,6 +44,7 @@
 
 <script>
 import { validateBlogPost } from "../../utilities/modules/validation";
+
 export default {
   name: "AddBlogPostOverlay",
   data() {
@@ -80,10 +81,10 @@ export default {
       try {
         this.onSubmit(this.title, this.content);
       } catch (err) {
-        console.log(err.response);
         this.printResponseError(err.response.status);
       }
     },
+
     validateFormInputs() {
       const { title, content } = this;
       const [isTitleValid, isContentValid] = validateBlogPost({
@@ -94,6 +95,21 @@ export default {
 
       return isTitleValid && isContentValid;
     },
+
+    setInvalidCssClass(isTitleValid, isContentValid) {
+      const baseInvalidCssClass = "invalid";
+      const showInvalidCssClass = "invalid show";
+      const titleClass = isTitleValid
+        ? baseInvalidCssClass
+        : showInvalidCssClass;
+      const contentClass = isContentValid
+        ? baseInvalidCssClass
+        : showInvalidCssClass;
+
+      this.titleValid = titleClass;
+      this.contentValid = contentClass;
+    },
+
     printResponseError(statusCode) {
       switch (statusCode) {
         case 401:
@@ -104,18 +120,6 @@ export default {
           this.formErrorMsg = `Unexpected Error with Statuscode: ${statusCode}!`;
           break;
       }
-    },
-    setInvalidCssClass(isTitleValid, isContentValid) {
-      const baseInvalidCssClass = "invalid";
-      const showInvalidCssClass = "invalid show";
-      const titleClass = isTitleValid
-        ? baseInvalidCssClass
-        : showInvalidCssClass;
-      const contentClass = isContentValid
-        ? baseInvalidCssClass
-        : showInvalidCssClass;
-      this.titleValid = titleClass;
-      this.contentValid = contentClass;
     },
   },
 

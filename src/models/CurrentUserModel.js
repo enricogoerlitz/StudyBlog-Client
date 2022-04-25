@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 class CurrentUserModel {
   username = null;
   role = null;
@@ -6,7 +5,7 @@ class CurrentUserModel {
 
   constructor(user) {
     const { id, username, role } = user;
-    this.username = user.username;
+    this.username = username;
     this.role = role;
     this.id = id;
   }

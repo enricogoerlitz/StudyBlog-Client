@@ -53,13 +53,16 @@
 </template>
 
 <script>
-import { fetchCurrentUser } from "../authentication/modules/auth";
 import axios from "axios";
+
+import { formateDate } from "../utilities/modules/dateFormatter";
+import { fetchCurrentUser } from "../authentication/modules/auth";
 import { getAxiosConfig } from "../authentication/modules/auth";
-import AddEditBlogPostOverlay from "@/components/BlogPosts/AddEditBlogPostOverlay.vue";
+import { createAPIRoute } from "../authentication/modules/backend";
+
 import BlogPostList from "../components/BlogPosts/BlogPostList.vue";
+import AddEditBlogPostOverlay from "@/components/BlogPosts/AddEditBlogPostOverlay.vue";
 import FloatingActionButton from "../components/General/FloatingActionButton.vue";
-import { createAPIRoute } from "../utilities/modules/backend";
 
 export default {
   components: { AddEditBlogPostOverlay, BlogPostList, FloatingActionButton },
@@ -167,7 +170,6 @@ export default {
         blogPostData,
         getAxiosConfig()
       );
-      console.log(res);
       return res;
     },
 
@@ -180,7 +182,6 @@ export default {
       };
       const route = this.getBlogPostRouteByRole();
       const res = await axios.put(route, blogPostObj, getAxiosConfig());
-      console.log(res);
       return res;
     },
 
@@ -190,7 +191,6 @@ export default {
       if (res.status === 202) {
         this.fetchBlogPosts();
       }
-      console.log(res);
     },
 
     async onEditFavorite(id, isFavorite) {
@@ -224,6 +224,10 @@ export default {
       );
       this.blogPosts = dbBlogPosts.data.sort(
         (a, b) => b.creationDate - a.creationDate
+      );
+      this.blogPosts.forEach(
+        (blogPost) =>
+          (blogPost.creationDate = formateDate(new Date(blogPost.creationDate)))
       );
       if (this.filterByFavorites && this.filterText !== "") {
         this.blogPostsUnfiltered = null;
