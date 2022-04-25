@@ -14,46 +14,11 @@
         id="search-user"
       />
     </div>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Username</th>
-          <th scope="col">Password</th>
-          <th scope="col">Role</th>
-          <th class="icon-col" scope="col">Edit</th>
-          <th class="icon-col" scope="col">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <th scope="row">{{ user.id }}</th>
-          <td>{{ user.username }}</td>
-          <td>*********</td>
-          <td>{{ user.role }}</td>
-          <td class="icon-col">
-            <button
-              v-if="user.role !== 'ADMIN'"
-              class="table-icon-button"
-              type="button"
-              @click="() => this.onShowUserOverlay(user)"
-            >
-              <i class="bi bi-pencil-square"></i>
-            </button>
-          </td>
-          <td class="icon-col">
-            <button
-              v-if="user.role !== 'ADMIN'"
-              class="table-icon-button"
-              type="button"
-              @click="() => this.onDeleteUser(user.id)"
-            >
-              <i class="bi bi-trash-fill"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <UserManagementTable
+      :users="users"
+      :onDeleteUser="onDeleteUser"
+      :onShowUserOverlay="onShowUserOverlay"
+    />
   </div>
   <UserFromOverlay v-if="showUserForm">
     <UserForm
@@ -71,15 +36,21 @@
 
 <script>
 import axios from "axios";
-import getAxiosConfig from "../authentication/getAxiosConfig";
-import Auth from "../authentication/Auth";
+import { getAxiosConfig } from "../authentication/modules/auth";
+import { fetchCurrentUser } from "../authentication/modules/auth";
 import FloatingActionButton from "../components/General/FloatingActionButton.vue";
 import UserFromOverlay from "@/components/UserForm/UserFromOverlay.vue";
 import UserForm from "../components/UserForm/UserForm.vue";
+import UserManagementTable from "../components/UserManagement/UserManagementTable.vue";
 import { createAPIRoute } from "@/utilities/modules/backend";
 
 export default {
-  components: { UserFromOverlay, UserForm, FloatingActionButton },
+  components: {
+    UserFromOverlay,
+    UserForm,
+    FloatingActionButton,
+    UserManagementTable,
+  },
   name: "UserManagementView",
   data() {
     return {
@@ -115,24 +86,8 @@ export default {
       }
       if (searchText !== "" && !this.usersUnfiltered) {
         this.usersUnfiltered = [...this.users];
-        this.users = this.usersUnfiltered.filter((user) => {
-          return (
-            user.username.toLowerCase().includes(searchText) ||
-            user.role.toLowerCase().includes(searchText) ||
-            user.id.toString().toLowerCase().includes(searchText)
-          );
-        });
-        return;
       }
-      if (searchText !== "" && this.usersUnfiltered) {
-        this.users = this.usersUnfiltered.filter((user) => {
-          return (
-            user.username.toLowerCase().includes(searchText) ||
-            user.role.toLowerCase().includes(searchText)
-          );
-        });
-        return;
-      }
+      this.filterUsersBySearch(searchText);
     },
 
     onFilterTimeout() {
@@ -161,7 +116,7 @@ export default {
         );
         console.log(res);
       }
-      // TODO: res.status === 202?
+
       this.fetchUsers();
       this.toggleShowUserFrom();
     },
@@ -175,12 +130,6 @@ export default {
       this.fetchUsers();
     },
 
-    toggleShowUserFrom() {
-      this.showUserForm = !this.showUserForm;
-      if (!this.showUserForm) {
-        this.editUser = null;
-      }
-    },
     async fetchUsers() {
       const dbUsers = await axios.get(
         createAPIRoute("/api/v1/admin/users"),
@@ -189,10 +138,26 @@ export default {
       this.users = dbUsers.data.sort((a, b) => a.id - b.id);
       this.filterText = "";
     },
+
+    filterUsersBySearch(searchText) {
+      this.users = this.usersUnfiltered.filter((user) => {
+        return (
+          user.username.toLowerCase().includes(searchText) ||
+          user.role.toLowerCase().includes(searchText) ||
+          user.id.toString().toLowerCase().includes(searchText)
+        );
+      });
+    },
+
+    toggleShowUserFrom() {
+      this.showUserForm = !this.showUserForm;
+      if (!this.showUserForm) {
+        this.editUser = null;
+      }
+    },
   },
   async mounted() {
-    // TODO: source out
-    this.currentUser = await Auth.fetchCurrentUser();
+    this.currentUser = await fetchCurrentUser();
     console.log("curr:", this.currentUser);
     if (!this.currentUser) {
       this.$router.push("/login");
@@ -208,23 +173,6 @@ export default {
 </script>
 
 <style scoped>
-tr {
-  text-align: left;
-}
-
-table {
-  overflow: hidden;
-  background-color: #fff;
-  padding: 0.3rem 0.4rem;
-  border-radius: 0.3rem;
-  border: 2px solid rgb(255, 255, 255);
-}
-
-table tbody tr {
-  height: 3rem;
-  border-bottom: 1px solid rgb(228, 228, 228);
-}
-
 .filter-area,
 h1 {
   text-align: left;
@@ -237,26 +185,5 @@ label {
 #search-user {
   max-width: 15rem;
   margin-right: 2rem;
-}
-
-.table-icon-button {
-  background: none;
-  background-color: none;
-  font-size: 1.2rem;
-  border-radius: 100%;
-  padding-top: 0.25rem;
-  padding: 0.25rem 0.5rem 0 0.5rem;
-  color: rgb(134, 134, 134);
-
-  border: none;
-}
-.table-icon-button:hover {
-  cursor: pointer;
-  color: rgb(40, 40, 40);
-}
-
-.icon-col {
-  text-align: center;
-  max-width: 2rem !important;
 }
 </style>

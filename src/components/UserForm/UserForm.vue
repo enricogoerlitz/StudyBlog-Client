@@ -68,7 +68,7 @@
 
 <script>
 import axios from "axios";
-import AuthJWTCookie from "../../authentication/AuthJWTCookie";
+import AuthJWTCookie from "../../authentication/classes/AuthJWTCookie";
 import { createAPIRoute } from "../../utilities/modules/backend";
 import {
   validateUsername,

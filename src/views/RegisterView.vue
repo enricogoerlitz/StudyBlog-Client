@@ -12,7 +12,7 @@
 <script>
 import UserForm from "@/components/UserForm/UserForm.vue";
 import axios from "axios";
-import AuthJWTCookie from "@/authentication/AuthJWTCookie";
+import AuthJWTCookie from "@/authentication/classes/AuthJWTCookie";
 
 export default {
   components: { UserForm },

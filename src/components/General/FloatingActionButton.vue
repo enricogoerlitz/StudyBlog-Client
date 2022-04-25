@@ -2,7 +2,7 @@
   <button
     class="floating-action-button btn btn-success"
     v-if="showButton"
-    @click="onShowOverlay"
+    @click="() => this.onShowOverlay()"
   >
     <i class="bi bi-plus-lg"></i>
   </button>

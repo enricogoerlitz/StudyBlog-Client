@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import Auth from "../authentication/Auth";
+import { fetchCurrentUser } from "../authentication/modules/auth";
 import axios from "axios";
-import getAxiosConfig from "../authentication/getAxiosConfig";
+import { getAxiosConfig } from "../authentication/modules/auth";
 import AddEditBlogPostOverlay from "@/components/BlogPosts/AddEditBlogPostOverlay.vue";
 import BlogPostList from "../components/BlogPosts/BlogPostList.vue";
 import FloatingActionButton from "../components/General/FloatingActionButton.vue";
@@ -283,7 +283,7 @@ export default {
     },
   },
   async mounted() {
-    this.currentUser = await Auth.fetchCurrentUser();
+    this.currentUser = await fetchCurrentUser();
     if (!this.currentUser) {
       this.$router.push("/login");
       return;

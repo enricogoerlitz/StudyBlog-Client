@@ -68,10 +68,10 @@
 </template>
 
 <script>
-import AuthJWTCookie from "@/authentication/AuthJWTCookie";
-import Auth from "../../authentication/Auth";
+import AuthJWTCookie from "@/authentication/classes/AuthJWTCookie";
+import { fetchCurrentUser } from "../../authentication/modules/auth";
 import axios from "axios";
-import getAxiosConfig from "../../authentication/getAxiosConfig";
+import { getAxiosConfig } from "../../authentication/modules/auth";
 import UserFromOverlay from "../UserForm/UserFromOverlay.vue";
 import UserForm from "../UserForm/UserForm.vue";
 import { createAPIRoute } from "../../utilities/modules/backend";
@@ -116,7 +116,7 @@ export default {
     async toggleShowUserFrom() {
       this.showUserForm = !this.showUserForm;
       if (!this.showUserForm) {
-        this.currentUser = await Auth.fetchCurrentUser();
+        this.currentUser = await fetchCurrentUser();
       }
     },
     async checkRoute() {
@@ -136,7 +136,7 @@ export default {
           break;
       }
 
-      this.currentUser = await Auth.fetchCurrentUser();
+      this.currentUser = await fetchCurrentUser();
       console.log("CURRUSER: ", this.currentUser);
       if (this.currentUser && (this.isLogin || this.isRegister)) {
         await this.$router.push("/blogposts");
