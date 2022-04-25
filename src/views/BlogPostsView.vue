@@ -90,19 +90,15 @@ export default {
     },
 
     onFilterByFavorites() {
-      const searchText = this.filterText.trim().toLowerCase();
+      const searchText = this.getPrepSearchText();
 
       this.filterByFavorites = !this.filterByFavorites;
       if (this.filterByFavorites) {
         if (this.blogPostsUnfiltered) {
-          this.blogPosts = this.blogPostsUnfiltered.filter(
-            (blogPost) => blogPost.favorite
-          );
+          this.filterBlogPostsByFavorites();
         } else {
-          this.blogPostsUnfiltered = [...this.blogPosts];
-          this.blogPosts = this.blogPosts.filter(
-            (blogPost) => blogPost.favorite
-          );
+          this.setBlogPostsUnfiltered();
+          this.filterBlogPostsByFavorites();
         }
         if (searchText !== "") {
           this.onFilterBySearch();
@@ -111,53 +107,37 @@ export default {
       }
 
       if (searchText === "") {
-        this.blogPosts = this.blogPostsUnfiltered;
-        this.blogPostsUnfiltered = null;
-        return;
+        this.resetBlogPostSearch();
       } else {
         this.onFilterBySearch();
       }
     },
 
     onFilterBySearch() {
-      const searchText = this.filterText.trim().toLowerCase();
+      const searchText = this.getPrepSearchText();
       if (
         searchText === "" &&
         !this.filterByFavorites &&
         this.blogPostsUnfiltered
       ) {
-        this.blogPosts = this.blogPostsUnfiltered;
-        this.blogPostsUnfiltered = null;
-        return;
-      }
-      if (searchText === "" && this.filterByFavorites) {
+        this.resetBlogPostSearch();
+      } else if (searchText === "" && this.filterByFavorites) {
         this.filterByFavorites = false;
         this.onFilterByFavorites();
         return;
-      }
-      if (searchText !== "" && this.filterByFavorites) {
+      } else if (searchText !== "" && this.filterByFavorites) {
         this.blogPosts = this.blogPostsUnfiltered
           .filter((blogPost) => blogPost.favorite)
-          .filter((blogPost) => {
-            // title, content, username
-            return (
-              blogPost.title.toLowerCase().includes(searchText) ||
-              blogPost.content.toLowerCase().includes(searchText) ||
-              blogPost.username.toLowerCase().includes(searchText)
-            );
-          });
-      }
-      if (searchText !== "" && !this.filterByFavorites) {
-        if (!this.blogPostsUnfiltered) {
-          this.blogPostsUnfiltered = [...this.blogPosts];
-        }
-        this.blogPosts = this.blogPostsUnfiltered.filter((blogPost) => {
-          return (
-            blogPost.title.toLowerCase().includes(searchText) ||
-            blogPost.content.toLowerCase().includes(searchText) ||
-            blogPost.username.toLowerCase().includes(searchText)
+          .filter((blogPost) =>
+            this.getFilterBySearchText(blogPost, searchText)
           );
-        });
+      } else if (searchText !== "" && !this.filterByFavorites) {
+        if (!this.blogPostsUnfiltered) {
+          this.setBlogPostsUnfiltered();
+        }
+        this.blogPosts = this.blogPostsUnfiltered.filter((blogPost) =>
+          this.getFilterBySearchText(blogPost, searchText)
+        );
       }
     },
 
@@ -259,6 +239,33 @@ export default {
         this.blogPostsUnfiltered = null;
         this.onFilterBySearch();
       }
+    },
+
+    getPrepSearchText() {
+      return this.filterText.trim().toLowerCase();
+    },
+
+    filterBlogPostsByFavorites() {
+      this.blogPosts = this.blogPostsUnfiltered.filter(
+        (blogPost) => blogPost.favorite
+      );
+    },
+
+    getFilterBySearchText(blogPost, searchText) {
+      return (
+        blogPost.title.toLowerCase().includes(searchText) ||
+        blogPost.content.toLowerCase().includes(searchText) ||
+        blogPost.username.toLowerCase().includes(searchText)
+      );
+    },
+
+    setBlogPostsUnfiltered() {
+      this.blogPostsUnfiltered = [...this.blogPosts];
+    },
+
+    resetBlogPostSearch() {
+      this.blogPosts = this.blogPostsUnfiltered;
+      this.blogPostsUnfiltered = null;
     },
 
     getBlogPostRouteByRole() {
