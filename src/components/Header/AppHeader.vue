@@ -52,7 +52,7 @@
                     Login
                 </button>
                 <button
-                    v-if="!isLogin && !isRegister"
+                    v-if="!isLogin && !isRegister && currentUser"
                     type="button"
                     class="btn btn-primary ml-auto"
                     @click="onLogout"
@@ -131,6 +131,7 @@ export default {
         async checkRoute() {
             switch (document.location.pathname) {
                 case "":
+                case "/":
                 case "/login":
                     this.isLogin = true;
                     this.isRegister = false;
