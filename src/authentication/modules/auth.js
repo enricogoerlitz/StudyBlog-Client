@@ -1,6 +1,7 @@
-import CurrentUserModel from "../../models/CurrentUserModel";
 import axios from "axios";
+
 import { createAPIRoute } from "./backend";
+import AuthJWTCookie from "../classes/AuthJWTCookie";
 
 const JWT_COOKIE_NAME = "studyblog_jwt";
 
@@ -28,7 +29,10 @@ export async function fetchCurrentUser() {
             createAPIRoute("/api/v1/auth/user"),
             getAxiosConfig()
         );
-        if (dbUser.status == 200) return new CurrentUserModel(dbUser.data);
+        if (dbUser) return dbUser.data;
+
+        new AuthJWTCookie().remove();
+        return null;
     } catch (err) {
         return null;
     }
