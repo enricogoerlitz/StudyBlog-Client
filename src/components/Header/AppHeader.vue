@@ -140,7 +140,6 @@ export default {
                     this.isRegister = true;
                     this.isLogin = false;
                     break;
-
                 default:
                     this.isRegister = false;
                     this.isLogin = false;

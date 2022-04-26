@@ -158,15 +158,19 @@ export default {
             const isPasswordValid = validatePassword(this.password);
             const isRoleValid = validateRole(this.role);
 
-            if (this.showVisitorLogin) {
-                // without role => login/register  ==> showVisitorLogIn
+            if (this.showVisitorLogin || (this.user && this.password !== "")) {
+                // without role => login/register or (updateMe + updateByAdmin, when password was entered -> validate password also) ==> showVisitorLogIn
                 this.validateLoginRegisterInputs(
                     isUsernameValid,
                     isPasswordValid
                 );
                 return isUsernameValid && isPasswordValid;
-            } else if (this.user && this.showRoleSelect) {
-                // without password => updateUserByAdmin ==> user !== null && showRoleSelect
+            } else if (
+                this.user &&
+                this.showRoleSelect &&
+                this.password === ""
+            ) {
+                // without password (if no password was entered!) => updateUserByAdmin ==> user !== null && showRoleSelect
                 this.validateUpdateUserByAdminInputs(
                     isUsernameValid,
                     isRoleValid
